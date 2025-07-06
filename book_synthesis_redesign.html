@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Synthesis AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      --dark-bg: #0a0a0a;
+      --surface: rgba(255, 255, 255, 0.05);
+      --surface-hover: rgba(255, 255, 255, 0.1);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-muted: rgba(255, 255, 255, 0.5);
+      --border: rgba(255, 255, 255, 0.1);
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 30px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--dark-bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Animated Background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+      animation: backgroundMove 20s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    @keyframes backgroundMove {
+      0%, 100% { transform: translateX(0) translateY(0); }
+      33% { transform: translateX(-20px) translateY(20px); }
+      66% { transform: translateX(20px) translateY(-20px); }
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 4rem;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .header h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .header h1::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: var(--accent-gradient);
+      border-radius: 2px;
+      animation: pulseWidth 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseWidth {
+      0%, 100% { width: 100px; }
+      50% { width: 150px; }
+    }
+
+    .header p {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      font-weight: 300;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Form Section */
+    .form-section {
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+      transition: all 0.3s ease;
+    }
+
+    .form-section:hover {
+      background: var(--surface-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .input-group {
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .input-group label {
+      display: block;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+      letter-spacing: 0.025em;
+    }
+
+    .input-wrapper {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .input-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--primary-gradient);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1;
+    }
+
+    .input-wrapper:focus-within::before {
+      opacity: 1;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 1.25rem 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .input-wrapper:focus-within input {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: transparent;
+      transform: translateY(-1px);
+    }
+
+    .input-wrapper input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .input-wrapper input:focus {
+      outline: none;
+    }
+
+    .error-message {
+      color: #ff6b6b;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+    }
+
+    .error-message.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Button */
+    .generate-btn {
+      width: 100%;
+      padding: 1.5rem 2rem;
+      background: var(--primary-gradient);
+      border: none;
+      border-radius: 16px;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    }
+
+    .generate-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .generate-btn:hover::before {
+      left: 100%;
+    }
+
+    .generate-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+    }
+
+    .generate-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Result Section */
+    .result-section {
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.5s ease;
+      margin-top: 2rem;
+    }
+
+    .result-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .result-section h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .prompt-output {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      min-height: 120px;
+      white-space: pre-wrap;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prompt-output::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--accent-gradient);
+      animation: shimmer 2s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .copy-btn {
+      background: var(--secondary-gradient);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      padding: 0.875rem 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(240, 147, 251, 0.3);
+    }
+
+    .copy-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4);
+    }
+
+    .copy-btn:active {
+      transform: translateY(0);
+    }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin: 2rem 0;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+    }
+
+    .loading.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .loading p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top: 3px solid var(--text-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltiptext {
+      visibility: hidden;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      text-align: center;
+      border-radius: 8px;
+      padding: 8px 12px;
+      position: absolute;
+      z-index: 1000;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: all 0.3s ease;
+      font-size: 0.875rem;
+      white-space: nowrap;
+    }
+
+    .tooltiptext::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: rgba(0, 0, 0, 0.9);
+    }
+
+    .tooltiptext.show {
+      visibility: visible;
+      opacity: 1;
+      transform: translateX(-50%) translateY(-5px);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .form-section {
+        padding: 2rem;
+      }
+      
+      .header {
+        margin-bottom: 3rem;
+      }
+      
+      .header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .header p {
+        font-size: 1.1rem;
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>📚 Book Synthesis AI</h1>
+      <p>Merge the wisdom of two books into one powerful concept. Enter their links and discover new insights.</p>
+    </header>
+
+    <section class="form-section">
+      <form id="book-form">
+        <div class="input-group">
+          <label for="book1">First Book Link</label>
+          <div class="input-wrapper">
+            <input type="url" id="book1" placeholder="https://example.com/book1" required>
+          </div>
+          <div class="error-message" id="error-book1">Please enter a valid URL</div>
+        </div>
+
+        <div class="input-group">
+          <label for="book2">Second Book Link</label>
+          <div class="input-wrapper">
+            <input type="url" id="book2" placeholder="https://example.com/book2" required>
+          </div>
+          <div class="error-message" id="error-book2">Please enter a valid URL</div>
+        </div>
+
+        <button type="submit" class="generate-btn">
+          Generate Synthesis Prompt
+        </button>
+      </form>
+    </section>
+
+    <div class="loading hidden" id="loading">
+      <p>Crafting your synthesis...</p>
+      <div class="spinner"></div>
+    </div>
+
+    <section class="result-section hidden" id="result">
+      <h3>Your AI Synthesis Prompt</h3>
+      <div class="prompt-output" id="prompt-output">
+        Your generated prompt will appear here...
+      </div>
+      <button class="copy-btn tooltip" id="copy-btn">
+        Copy to Clipboard
+        <span class="tooltiptext">Copied!</span>
+      </button>
+    </section>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('book-form');
+      const loading = document.getElementById('loading');
+      const result = document.getElementById('result');
+      const promptOutput = document.getElementById('prompt-output');
+      const copyBtn = document.getElementById('copy-btn');
+      const inputs = document.querySelectorAll('input[type="url"]');
+      
+      // Real-time validation
+      inputs.forEach(input => {
+        input.addEventListener('input', function() {
+          validateInput(this);
+        });
+      });
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const book1 = document.getElementById('book1').value;
+        const book2 = document.getElementById('book2').value;
+        
+        if (!isValidUrl(book1) || !isValidUrl(book2)) {
+          showErrors();
+          return;
+        }
+        
+        startGeneration(book1, book2);
+      });
+
+      copyBtn.addEventListener('click', function() {
+        copyToClipboard();
+      });
+
+      function validateInput(input) {
+        const errorElement = document.getElementById(`error-${input.id}`);
+        const isValid = input.value === '' || isValidUrl(input.value);
+        
+        if (!isValid) {
+          errorElement.classList.add('visible');
+          input.parentElement.style.borderColor = '#ff6b6b';
+        } else {
+          errorElement.classList.remove('visible');
+          input.parentElement.style.borderColor = '';
+        }
+      }
+
+      function isValidUrl(url) {
+        try {
+          new URL(url);
+          return true;
+        } catch {
+          return false;
+        }
+      }
+
+      function showErrors() {
+        inputs.forEach(input => {
+          if (!isValidUrl(input.value)) {
+            const errorElement = document.getElementById(`error-${input.id}`);
+            errorElement.classList.add('visible');
+          }
+        });
+      }
+
+      function startGeneration(book1Url, book2Url) {
+        // Hide result and show loading
+        result.classList.add('hidden');
+        loading.classList.remove('hidden');
+        loading.classList.add('visible');
+        
+        // Simulate API call
+        setTimeout(() => {
+          generatePrompt(book1Url, book2Url);
+          loading.classList.remove('visible');
+          loading.classList.add('hidden');
+          result.classList.remove('hidden');
+          result.classList.add('visible');
+        }, 2000);
+      }
+
+      function generatePrompt(book1Url, book2Url) {
+        const book1Title = extractTitleFromUrl(book1Url);
+        const book2Title = extractTitleFromUrl(book2Url);
+        
+        const prompt = `Create a comprehensive synthesis of the core concepts from "${book1Title}" and "${book2Title}". 
+
+Analyze how these works complement each other and identify:
+• Key themes that intersect between both books
+• Contrasting viewpoints that create productive tension
+• Novel insights that emerge from combining their frameworks
+• Practical applications of the merged concepts
+
+Develop a unified theory that leverages the strengths of both perspectives, addressing potential conflicts while highlighting synergies. Provide concrete examples of how this synthesis could be applied in real-world scenarios, making the combined wisdom more actionable than either book alone.
+
+Structure your response to show the evolution from individual concepts to the integrated framework, demonstrating how the whole becomes greater than the sum of its parts.`;
+        
+        promptOutput.textContent = prompt;
+      }
+
+      function extractTitleFromUrl(url) {
+        try {
+          const urlObj = new URL(url);
+          const pathParts = urlObj.pathname.split('/').filter(part => part);
+          const lastPart = pathParts[pathParts.length - 1] || 'Unknown Book';
+          
+          return lastPart
+            .replace(/[-_]/g, ' ')
+            .replace(/\.(html|htm|php|asp|aspx)$/i, '')
+            .replace(/\b\w/g, letter => letter.toUpperCase());
+        } catch {
+          return 'Unknown Book';
+        }
+      }
+
+      function copyToClipboard() {
+        const text = promptOutput.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          const tooltip = copyBtn.querySelector('.tooltiptext');
+          tooltip.classList.add('show');
+          
+          setTimeout(() => {
+            tooltip.classList.remove('show');
+          }, 2000);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
